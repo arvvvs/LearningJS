@@ -1,3 +1,7 @@
+Function.prototype.method = function(name, func) {
+	this.prototype[name] = func;
+	return this;
+};
 document.writeln('Hello world!');
 document.writeln('hello');
 var hello = {
@@ -13,6 +17,7 @@ reference1.x = 'bye-bey';
 document.writeln(trial.x);
 //creating a new non function object
 //beget
+//adding a method to Object.prootype makes it available to all objects
 if(typeof Object.beget !== 'function'){
 	Object.beget = function(o) {
 	var F = function () {};
@@ -70,3 +75,60 @@ myObject.double = function () {
 };
 myObject.double();
 document.writeln(myObject.value); //produces four
+var add = function (a,b) {
+	return a+b;
+};
+//constructor inocation pattern (not recommended for use)
+var Quo = function (string) {
+	this.status = string;
+};
+//get status
+Quo.prototype.get_status = function () {
+	return this.status;
+};
+//Make an instance of Quo
+var myQuo = new Quo("confused");
+document.writeln(myQuo.get_status());
+//apply invocation pattern
+//array of two numbers and add
+var array = [3,4];
+//apply takes two parameters.  first paramenter is the value bound to "this".  second one is parameter is an array of parameters the function takes
+var sum = add.apply(null, array);
+console.log(sum);
+var statusObject = {
+	status: 'A-OK'
+};
+//statusObject does not inherity from Quo.prototype.  Howver usuig the apply invocation pattern we can use the get_status method and apply it on status Object
+var status = Quo.prototype.get_status.apply(statusObject);
+//in the above the "this" references the status object
+console.log(status);
+//arguments parameter: allows you write parameters with an unspecified number of parameters. Not useful according to crockford.
+var sum = function() {
+	var i, sum =0;
+	for(i = 0; i < arguments.length; i += 1){
+		sum += arguments[i];
+	}
+	return sum;
+};
+document.writeln(sum(4,8,15,16,23,42));
+//exceptions mechanism
+var add = function(a, b) {
+	if(typeof a !== 'number' || typeof b !== 'number'){
+		throw {
+			name: 'TypeError',
+			message: 'add needs numbers'
+		};
+	}
+	return a + b;
+}
+//name gives identity of error
+//message is the description
+//try catch object:
+var try_it = function () {
+	try {
+		add("seven");
+	} catch(e) {
+		document.writeln(e.name + ':' + e.message);
+	}
+}
+try_it();
